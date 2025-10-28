@@ -1,0 +1,21 @@
+# Run server
+go run main.go
+
+Command dibawah ini pake terminal biasa
+# Login and get token
+curl.exe -X POST http://localhost:8080/api/v1/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+
+# Use token for protected endpoints
+curl -X GET http://localhost:8080/api/v1/admin/dashboard \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+======================================================
+2 Command dibawah ini kalo pake powershell
+-------------------------------------
+# Login as admin
+  $adminLogin = @{username="admin";password="admin123"} | ConvertTo-Json; $response = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/login" -Method Post -ContentType "application/json" -Body $adminLogin; $token = $response.token; Write-Host "Token: $token"
+
+# Test all endpoints
+$headers = @{"Authorization"="Bearer $token"}; @("me","users","reports","admin/dashboard","admin/audit-logs") | ForEach-Object { Write-Host "`nGET $_"; Invoke-RestMethod -Uri "http://localhost:8080/api/v1/$_" -Headers $headers | ConvertTo-Json -Depth 3 }
